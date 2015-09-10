@@ -21,6 +21,7 @@ function AjaxLink(url, statusPage) {
                 self.getStatusPage();
                 if (self.statusPage == 'new') {
                     self.insertNewPage(request.responseText);
+                    window.scrollTo(0, 0);
                 } else if (self.statusPage == 'back') {
                     self.insertBackPage(request .responseText);
                 }

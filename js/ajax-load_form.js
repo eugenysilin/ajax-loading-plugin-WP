@@ -44,6 +44,7 @@ function AjaxForm(form) {
             if (request.status >= 200 && request.status < 400) {
                 // Success!
                 self.insertPage(request.responseText);
+                window.scrollTo(0, 0);
             } else {
 
             }
