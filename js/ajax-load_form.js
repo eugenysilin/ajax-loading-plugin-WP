@@ -62,11 +62,19 @@ function AjaxForm(form) {
     };
 }
 
+function hasClass(el, cl) {
+    var regex = new RegExp('(?:\\s|^)' + cl + '(?:\\s|$)');
+    return !!el.className.match(regex);
+}
+
+var cfClass = document.querySelector('meta[name=plugin_ajax-load_options]').getAttribute('data-options_cf_form_class');
 var forms = document.querySelectorAll('form');
 for (var key in forms) {
     forms[key].onsubmit = function (e) {
-        e.preventDefault();
-        var formObj = new AjaxForm(this);
-        formObj.ajaxRequest();
+        if (!hasClass(this, cfClass)) {
+            e.preventDefault();
+            var formObj = new AjaxForm(this);
+            formObj.ajaxRequest();
+        }
     };
 }
