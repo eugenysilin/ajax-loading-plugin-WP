@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Ajax Load
-Plugin URI: http://planet-it.biz/
-Description: Short Description
+Plugin URI: https://github.com/monarch-php/ajax-load-plugin-WP/
+Description: The simple WP plug-in which allows to follow links and to send html-forms without reset of pages using Ajax.
 Version: 1.0
 Author: Eugeny Silin (Planet IT Team)
 Author URI: http://planet-it.biz/

@@ -68,6 +68,7 @@ function hasClass(el, cl) {
 }
 
 var cfClass = document.querySelector('meta[name=plugin_ajax-load_options]').getAttribute('data-options_cf_form_class');
+
 var forms = document.querySelectorAll('form');
 for (var key in forms) {
     forms[key].onsubmit = function (e) {
