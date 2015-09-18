@@ -1,4 +1,15 @@
 <?php
+/*
+Plugin Name: Ajax Load
+Plugin URI:  https://github.com/monarch-php/ajax-load-plugin-WP/
+Description: The simple WP plug-in which allows to follow links and to send html-forms without reset of pages using Ajax.
+Version:     1.0
+Author:      Eugeny Silin (Planet IT Team)
+Author URI:  http://planet-it.biz/
+License:     GPL2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+*/
+
 if (!current_user_can('manage_options')) {
     wp_die(__('You do not have sufficient permissions to access this page.'));
 }

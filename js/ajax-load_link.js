@@ -1,3 +1,14 @@
+/*
+ Plugin Name: Ajax Load
+ Plugin URI:  https://github.com/monarch-php/ajax-load-plugin-WP/
+ Description: The simple WP plug-in which allows to follow links and to send html-forms without reset of pages using Ajax.
+ Version:     1.0
+ Author:      Eugeny Silin (Planet IT Team)
+ Author URI:  http://planet-it.biz/
+ License:     GPL2
+ License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ */
+
 function AjaxLink(url, statusPage) {
     var self = this;
     self.url = url;
@@ -16,17 +27,18 @@ function AjaxLink(url, statusPage) {
         request.open('POST', self.url, true);
         request.send();
         request.onload = function () {
-            if (request.status >= 200 && request.status < 400) {
+            if (request.status >= 200 && request.status < 500) {
                 // Success!
                 self.getStatusPage();
                 if (self.statusPage == 'new') {
                     self.insertNewPage(request.responseText);
                     window.scrollTo(0, 0);
                 } else if (self.statusPage == 'back') {
-                    self.insertBackPage(request .responseText);
+                    self.insertBackPage(request.responseText);
                 }
             } else {
                 // We reached our target server, but it returned an error
+                self.insertNewPage('<h1>' + request.statusText + '</h1>');
             }
             request.onerror = function () {
                 // There was a connection error of some sort
