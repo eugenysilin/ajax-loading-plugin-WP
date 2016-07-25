@@ -1,7 +1,25 @@
-function AjaxLink(url, statusPage) {
-    var self = this;
+function AjaxLoadingLink(url, statusPage) {
+    var newHtml, newNonce, alActionForNonce, self = this;
     self.url = url;
     self.statusPage = statusPage;
+
+    var getLocation = function (href) {
+        var l = document.createElement("a");
+        l.href = href;
+        return l;
+    };
+
+    var preloader = function (bool) {
+        var preloadImg = document.querySelector('.ajax-loading-preload');
+        var preloadDiv = document.querySelector('.ajax-loading-full');
+        if (bool) {
+            preloadImg.style.display = 'block';
+            preloadDiv.style.display = 'block';
+        } else {
+            preloadImg.style.display = 'none';
+            preloadDiv.style.display = 'none';
+        }
+    };
 
     self.getStatusPage = function () {
         if (self.statusPage == 'back') {
@@ -12,18 +30,31 @@ function AjaxLink(url, statusPage) {
     };
 
     self.ajaxRequest = function () {
+        preloader(true);
         var request = new XMLHttpRequest();
-        request.open('POST', self.url, true);
-        request.send();
+        var data = 'url=' + encodeURIComponent(self.url) +
+            '&al_action_for_nonce=' + encodeURIComponent(ajaxLoading.al_action_for_nonce) +
+            '&action=' + encodeURIComponent(ajaxLoading.action) +
+            '&new_al_action_for_nonce=' + encodeURIComponent('ajax-loading-nonce_' + getLocation(self.url).pathname.replace(/\//g, '-')) +
+            '&nonce=' + encodeURIComponent(ajaxLoading.nonce);
+        request.open('POST', ajaxLoading.url, true);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.send(data);
         request.onload = function () {
+            newHtml = JSON.parse(request.responseText).html;
+            newNonce = JSON.parse(request.responseText).nonce;
+            alActionForNonce = JSON.parse(request.responseText).al_action_for_nonce;
+
             if (request.status >= 200 && request.status < 500) {
                 // Success!
                 self.getStatusPage();
                 if (self.statusPage == 'new') {
-                    self.insertNewPage(request.responseText);
+                    preloader(false);
+                    self.insertNewPage(newHtml);
                     window.scrollTo(0, 0);
                 } else if (self.statusPage == 'back') {
-                    self.insertBackPage(request.responseText);
+                    preloader(false);
+                    self.insertBackPage(newHtml);
                 }
             } else {
                 // We reached our target server, but it returned an error
@@ -38,6 +69,8 @@ function AjaxLink(url, statusPage) {
     self.insertNewPage = function (html) {
         var newDoc = document.open("text/html", "replace");
         document.write(html);
+        ajaxLoading.nonce = newNonce;
+        ajaxLoading.al_action_for_nonce = alActionForNonce;
         newDoc.close();
         window.history.pushState({}, "", self.url);
     };
@@ -45,6 +78,8 @@ function AjaxLink(url, statusPage) {
     self.insertBackPage = function (html) {
         var newDoc = document.open("text/html", "replace");
         document.write(html);
+        ajaxLoading.nonce = newNonce;
+        ajaxLoading.al_action_for_nonce = alActionForNonce;
         newDoc.close();
     };
 }
@@ -56,13 +91,13 @@ for (var key in links) {
         var linkTarget = this.getAttribute('target');
         if (!linkHref.indexOf('wp-admin') + 1 && linkTarget != '_blank') {
             e.preventDefault();
-            var linkObj = new AjaxLink(linkHref);
+            var linkObj = new AjaxLoadingLink(linkHref);
             linkObj.ajaxRequest();
         }
     };
 }
 
 window.addEventListener("popstate", function (e) {
-    var linkObjBack = new AjaxLink(window.location.href, 'back');
+    var linkObjBack = new AjaxLoadingLink(window.location.href, 'back');
     linkObjBack.ajaxRequest();
 }, false);
