@@ -20,10 +20,6 @@ function AjaxLoadingForm(form) {
         preloadImg.style.display = bool ? 'block' : 'none';
     };
 
-    // self.getUrlByMethod = function () {
-    //     self.url = (self.method == 'GET') ? self.action + '?' + self.data : self.action;
-    // };
-
     self.getRequestData = function () {
         self.data = 'url=' + encodeURIComponent(self.url) +
             '&al_action_for_nonce=' + encodeURIComponent(ajaxLoading.al_action_for_nonce) +
