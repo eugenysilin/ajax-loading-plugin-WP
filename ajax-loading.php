@@ -80,8 +80,8 @@ function ajax_loading_nonce()
     $nonce = $_POST['nonce'];
     $new_nonce = wp_create_nonce($_POST['new_al_action_for_nonce']);
 
-//    if (!wp_verify_nonce($nonce, $_POST['al_action_for_nonce']))
-//        die ('Stop!');
+    if (!wp_verify_nonce($nonce, $_POST['al_action_for_nonce']))
+        die ('Stop!');
 
     if ($_POST['form_method']) {
         if ($_POST['url']) {
@@ -141,10 +141,8 @@ function get_form_content($url, $method, $form_data)
         $stream = fopen($url, 'r', false, $context);
         $content = stream_get_contents($stream);
         fclose($stream);
-        
-        return $content;
 
-//        return file_get_contents($url, false, $context);
+        return $content;
     }
 }
 

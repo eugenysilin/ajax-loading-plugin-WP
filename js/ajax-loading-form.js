@@ -87,13 +87,13 @@ function hasClass(el, cl) {
 
 var cfClass = document.querySelector('meta[name=plugin_ajax-loading_options]').getAttribute('data-options_cf_form_class');
 
-// var forms = document.querySelectorAll('form');
-// for (var key in forms) {
-//     forms[key].onsubmit = function (e) {
-//         if (!hasClass(this, cfClass)) {
-//             e.preventDefault();
-//             var formObj = new AjaxLoadingForm(this);
-//             formObj.ajaxRequest();
-//         }
-//     };
-// }
+var forms = document.querySelectorAll('form');
+for (var key in forms) {
+    forms[key].onsubmit = function (e) {
+        if (!hasClass(this, cfClass)) {
+            e.preventDefault();
+            var formObj = new AjaxLoadingForm(this);
+            formObj.ajaxRequest();
+        }
+    };
+}
