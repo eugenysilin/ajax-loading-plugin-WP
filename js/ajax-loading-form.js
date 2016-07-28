@@ -1,49 +1,66 @@
-function AjaxForm(form) {
-    var self = this;
+function AjaxLoadingForm(form) {
+    var newHtml,
+        newNonce,
+        alActionForNonce,
+        newUrl,
+        preloadImg = document.querySelector('.ajax-loading-preload'),
+        self = this;
     self.form = form;
-    self.action = self.form.getAttribute('action');
+    self.url = self.form.getAttribute('action');
     self.method = self.form.getAttribute('method').toUpperCase();
     self.formData = form.querySelectorAll('*');
 
+    var getLocation = function (href) {
+        var l = document.createElement("a");
+        l.href = href;
+        return l;
+    };
+
+    self.preLoader = function (bool) {
+        preloadImg.style.display = bool ? 'block' : 'none';
+    };
+
+    // self.getUrlByMethod = function () {
+    //     self.url = (self.method == 'GET') ? self.action + '?' + self.data : self.action;
+    // };
+
     self.getRequestData = function () {
-        self.data = '';
+        self.data = 'url=' + encodeURIComponent(self.url) +
+            '&al_action_for_nonce=' + encodeURIComponent(ajaxLoading.al_action_for_nonce) +
+            '&action=' + encodeURIComponent(ajaxLoading.action) +
+            '&new_al_action_for_nonce=' + encodeURIComponent('ajax-loading-nonce_' + getLocation(self.url).pathname.replace(/\//g, '-')) +
+            '&nonce=' + encodeURIComponent(ajaxLoading.nonce) +
+            '&form_method=' + encodeURIComponent(self.method);
         for (var key in self.formData) {
             var currentFormData = self.formData[key];
             if (typeof currentFormData == 'object') {
                 var name = currentFormData.getAttribute('name');
-                var value = currentFormData.value;
+                var value = encodeURIComponent(currentFormData.value);
                 if (name) {
-                    self.data += name + '=' + value + '&';
+                    self.data += '&form_data[' + name + ']=' + value;
                 }
             }
-        }
-        self.data = self.data.substring(0, self.data.length - 1);
-    };
-
-    self.getDataQueryByMethod = function () {
-        self.getRequestData();
-        if (self.method == 'GET') {
-            self.url = self.action + '?' + self.data;
-            self.requestSendData = '';
-        } else if (self.method == 'POST') {
-            self.url = self.action;
-            self.requestSendData = self.data;
         }
     };
 
     self.ajaxRequest = function () {
-        self.getDataQueryByMethod(self.requestSendData);
+        self.getRequestData();
         var request = new XMLHttpRequest();
-        request.open(self.method, self.url, true);
+        request.open('POST', ajaxLoading.url, true);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.send(self.requestSendData);
+        request.send(self.data);
         request.onload = function () {
+
+            newHtml = JSON.parse(request.responseText).html;
+            newNonce = JSON.parse(request.responseText).nonce;
+            alActionForNonce = JSON.parse(request.responseText).al_action_for_nonce;
+            newUrl = JSON.parse(request.responseText).new_url;
 
             // We reached our target server, but it returned an error
             // There was a connection error of some sort
             if (request.status >= 200 && request.status < 500) {
                 // Success!
-                self.insertPage(request.responseText);
+                self.insertPage(newHtml);
                 window.scrollTo(0, 0);
             } else {
                 // We reached our target server, but it returned an error
@@ -59,7 +76,7 @@ function AjaxForm(form) {
         var newDoc = document.open("text/html", "replace");
         document.write(html);
         newDoc.close();
-        window.history.pushState({}, "", self.url);
+        window.history.pushState({}, "", newUrl);
     };
 }
 
@@ -70,13 +87,13 @@ function hasClass(el, cl) {
 
 var cfClass = document.querySelector('meta[name=plugin_ajax-loading_options]').getAttribute('data-options_cf_form_class');
 
-var forms = document.querySelectorAll('form');
-for (var key in forms) {
-    forms[key].onsubmit = function (e) {
-        if (!hasClass(this, cfClass)) {
-            e.preventDefault();
-            var formObj = new AjaxForm(this);
-            formObj.ajaxRequest();
-        }
-    };
-}
+// var forms = document.querySelectorAll('form');
+// for (var key in forms) {
+//     forms[key].onsubmit = function (e) {
+//         if (!hasClass(this, cfClass)) {
+//             e.preventDefault();
+//             var formObj = new AjaxLoadingForm(this);
+//             formObj.ajaxRequest();
+//         }
+//     };
+// }

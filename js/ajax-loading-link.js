@@ -1,5 +1,9 @@
 function AjaxLoadingLink(url, statusPage) {
-    var newHtml, newNonce, alActionForNonce, self = this;
+    var newHtml,
+        newNonce,
+        alActionForNonce,
+        preloadImg = document.querySelector('.ajax-loading-preload'),
+        self = this;
     self.url = url;
     self.statusPage = statusPage;
 
@@ -9,16 +13,8 @@ function AjaxLoadingLink(url, statusPage) {
         return l;
     };
 
-    var preloader = function (bool) {
-        var preloadImg = document.querySelector('.ajax-loading-preload');
-        var preloadDiv = document.querySelector('.ajax-loading-full');
-        if (bool) {
-            preloadImg.style.display = 'block';
-            preloadDiv.style.display = 'block';
-        } else {
-            preloadImg.style.display = 'none';
-            preloadDiv.style.display = 'none';
-        }
+    self.preLoader = function (bool) {
+        preloadImg.style.display = bool ? 'block' : 'none';
     };
 
     self.getStatusPage = function () {
@@ -30,7 +26,7 @@ function AjaxLoadingLink(url, statusPage) {
     };
 
     self.ajaxRequest = function () {
-        preloader(true);
+        self.preLoader(true);
         var request = new XMLHttpRequest();
         var data = 'url=' + encodeURIComponent(self.url) +
             '&al_action_for_nonce=' + encodeURIComponent(ajaxLoading.al_action_for_nonce) +
@@ -49,11 +45,11 @@ function AjaxLoadingLink(url, statusPage) {
                 // Success!
                 self.getStatusPage();
                 if (self.statusPage == 'new') {
-                    preloader(false);
+                    self.preLoader(false);
                     self.insertNewPage(newHtml);
                     window.scrollTo(0, 0);
                 } else if (self.statusPage == 'back') {
-                    preloader(false);
+                    self.preLoader(false);
                     self.insertBackPage(newHtml);
                 }
             } else {
