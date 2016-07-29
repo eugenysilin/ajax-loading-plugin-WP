@@ -40,6 +40,10 @@ function AjaxLoadingForm(form) {
     };
 
     self.ajaxRequest = function () {
+        if(getLocation(self.url).hostname != window.location.hostname){
+            self.form.submit();
+            return false;
+        }
         self.getRequestData();
         var request = new XMLHttpRequest();
         request.open('POST', ajaxLoading.url, true);
