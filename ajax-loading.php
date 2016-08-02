@@ -4,13 +4,13 @@ Plugin Name: Ajax Loading
 Plugin URI:
 Description: The simple WP plug-in which allows to follow links and to send html-forms without reset of pages using Ajax.
 Version:     1.0.0
-Author:      Eugeny Silin (Sigmalion Team)
+Author:      Eugeny Silin (The Sigmalion Team)
 Author URI:  https://sigmalion.com.ua/
 License:     GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-add_action('wp_enqueue_scripts', 'register_ajax_loading_js', 200);
+add_action('wp_enqueue_scripts', 'register_ajax_loading_js', 200, 1);
 
 function register_ajax_loading_js()
 {

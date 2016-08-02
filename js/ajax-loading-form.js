@@ -50,16 +50,14 @@ function AjaxLoadingForm(form) {
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.send(self.data);
         request.onload = function () {
-
-            newHtml = JSON.parse(request.responseText).html;
-            newNonce = JSON.parse(request.responseText).nonce;
-            alActionForNonce = JSON.parse(request.responseText).al_action_for_nonce;
-            newUrl = JSON.parse(request.responseText).new_url;
-
             // We reached our target server, but it returned an error
             // There was a connection error of some sort
             if (request.status >= 200 && request.status < 500) {
                 // Success!
+                newHtml = JSON.parse(request.responseText).html;
+                newNonce = JSON.parse(request.responseText).nonce;
+                alActionForNonce = JSON.parse(request.responseText).al_action_for_nonce;
+                newUrl = JSON.parse(request.responseText).new_url;
                 self.insertPage(newHtml);
                 window.scrollTo(0, 0);
             } else {

@@ -37,12 +37,11 @@ function AjaxLoadingLink(url, statusPage) {
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.send(data);
         request.onload = function () {
-            newHtml = JSON.parse(request.responseText).html;
-            newNonce = JSON.parse(request.responseText).nonce;
-            alActionForNonce = JSON.parse(request.responseText).al_action_for_nonce;
-
             if (request.status >= 200 && request.status < 500) {
                 // Success!
+                newHtml = JSON.parse(request.responseText).html;
+                newNonce = JSON.parse(request.responseText).nonce;
+                alActionForNonce = JSON.parse(request.responseText).al_action_for_nonce;
                 self.getStatusPage();
                 if (self.statusPage == 'new') {
                     self.preLoader(false);
